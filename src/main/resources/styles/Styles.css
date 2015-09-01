@@ -1,0 +1,7 @@
+.button {
+    -fx-font-weight: bold;
+}
+
+.label {
+    -fx-font-style: italic
+}

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- Maven version of the xml document currently only 4.0.0 is valid -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- The GAV consists of an arbitrary descriptor that is usually in the
+    form of a reverse domain name. -->
+    <groupId>com.kfcstandard</groupId>
+
+    <!-- This is the name given to the packaged build -->
+    <artifactId>javafxarchetype</artifactId>
+
+    <!-- The version of the build. Any value is valid though a number and a
+    string are common. SNAPSHOT means a project under development. FINAL is commonly
+    used to refer to stable production version -->
+    <version>0.1</version>
+
+    <!-- Default value is jar but may be war or ear -->
+    <packaging>jar</packaging>
+
+    <!-- The name given to the project. Unlike groupId and artifactId a name
+    may have spaces -->
+    <name>${artifactId}</name>
+
+    <!-- A description of the program -->
+    <description>Standard starting point for JavaFX programs for students of Ken Fogel</description>
+
+    <!-- Identifies the programmer or programmers who worked on the project -->
+    <developers>
+        <developer>
+            <id>Enter your school id</id>
+            <name>Enter your name</name>
+            <email>Enter your email address</email>
+        </developer>
+    </developers>
+
+    <!-- The company or organization that the programmer(s) work for -->
+    <organization>
+        <name>Enter school name</name>
+    </organization>
+
+    <!-- Global settings for the project. Settings can be accessed in the pom
+    by placing the tag name in ${...} ex. ${mainClass} -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- class that has the main method -->
+        <mainClass>${groupId}.${artifactId}.MainAppFX</mainClass>
+    </properties>
+
+    <dependencies>
+
+        <!-- The dependency for the SLF4J Facade -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+        <!-- Binding for Log4J -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <!-- Logging Framework Dependency Uses the log4j2 library -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.3</version>
+        </dependency>
+
+        <!-- JUnit 4 testing dependency -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <!-- only to be used during test phase will not be included in executable
+            jar -->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- MySQL dependency -->
+        <!--        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.36</version>
+        </dependency>-->
+
+        <!-- Jodd Mail Dependency -->
+        <!--        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-mail</artifactId>
+            <version>3.6.6</version>
+        </dependency>-->
+
+    </dependencies>
+
+    <build>
+        <!-- Goals may be set in the IDE or the pom IDE or CLI goals override the
+        defaultGoal -->
+        <defaultGoal>clean compile package exec:java</defaultGoal>
+
+        <!-- Plugins define components that perform actions -->
+        <plugins>
+
+            <!-- Compiler: Select the version of the Java compiler and any command
+            line switches to use with it -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+
+                <configuration>
+                    <!-- Java version of the source files -->
+                    <source>1.8</source>
+
+                    <!-- Java version of the class files -->
+                    <target>1.8</target>
+
+                    <!-- sometimes the IDE does not reveal all the important warnings -->
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <!-- Shade: Create an executable jar containing all the dependencies when
+            the package goal is carried out -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <transformers>
+                        <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>${mainClass}</mainClass>
+                        </transformer>
+                    </transformers>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Exec: Executes the program -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <!-- Runs in separate instance of JVM -->
+                            <goal>exec</goal>
+                            <!-- Runs in same instance of JVM as Eclipse -->
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <!--used by java goal -->
+                            <!--executes in the same VM that Maven runs in -->
+                            <mainClass>${mainClass}</mainClass>
+
+                            <!--used by exec goal -->
+                            <!--runs in a separate VM from the one that Maven runs in -->
+                            <executable>${java.home}/bin/java</executable>
+                            <commandlineArgs>-jar ${project.build.directory}/${project.build.finalName}.jar</commandlineArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Surefire: During the test phase of the build life cycle executes
+            JUnit tests and write the results to an xml and txt file -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <!-- Turn on tests: false, Turn off tests: true -->
+                <configuration>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
+
+
